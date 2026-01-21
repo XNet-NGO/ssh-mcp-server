@@ -45,7 +45,11 @@ npm install @xnet-ngo/ssh-mcp-server
 ### Docker
 
 ```bash
-docker pull mcp/ssh-mcp-server:0.2.0
+# From GitHub Container Registry (recommended)
+docker pull ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0
+
+# Or use latest
+docker pull ghcr.io/xnet-ngo/ssh-mcp-server:latest
 ```
 
 ### Usage with MCP
@@ -60,7 +64,7 @@ Add to your MCP configuration:
       "args": [
         "run", "--rm", "-i",
         "-v", "~/.ssh:/root/.ssh:ro",
-        "mcp/ssh-mcp-server:0.2.0"
+        "ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0"
       ]
     }
   }
@@ -282,12 +286,12 @@ npm run format
 
 ```bash
 # Build image
-docker build -f Dockerfile.ssh -t mcp/ssh-mcp-server:0.2.0 .
+docker build -f Dockerfile.ssh -t ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0 .
 
 # Run container
 docker run --rm -i \
   -v ~/.ssh:/root/.ssh:ro \
-  mcp/ssh-mcp-server:0.2.0
+  ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0
 ```
 
 ## Security Considerations

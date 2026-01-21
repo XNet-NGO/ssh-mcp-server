@@ -187,13 +187,16 @@ ssh-mcp-server --version
 ## Docker Installation
 
 ```bash
-# Pull image
-docker pull mcp/ssh-mcp-server:0.2.0
+# Pull image from GitHub Container Registry
+docker pull ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0
+
+# Or use latest
+docker pull ghcr.io/xnet-ngo/ssh-mcp-server:latest
 
 # Run server
 docker run --rm -i \
   -v ~/.ssh:/root/.ssh:ro \
-  mcp/ssh-mcp-server:0.2.0
+  ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0
 ```
 
 ## From Source
@@ -239,7 +242,7 @@ Add to your MCP configuration file:
       "args": [
         "run", "--rm", "-i",
         "-v", "~/.ssh:/root/.ssh:ro",
-        "mcp/ssh-mcp-server:0.2.0"
+        "ghcr.io/xnet-ngo/ssh-mcp-server:0.2.0"
       ]
     }
   }
