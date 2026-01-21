@@ -260,7 +260,14 @@ jobs:
             artifacts/ssh-mcp-server-macos-arm64/ssh-mcp-server-macos-arm64
             artifacts/ssh-mcp-server_0.2.0_amd64.deb/ssh-mcp-server_0.2.0_amd64.deb
             artifacts/ssh-mcp-server_0.2.0_arm64.deb/ssh-mcp-server_0.2.0_arm64.deb
-            artifacts/tar-archives/*.tar.gz
-            artifacts/zip-archives/*.zip
+            artifacts/tar-archives/ssh-mcp-server-0.2.0-linux-x64.tar.gz
+            artifacts/tar-archives/ssh-mcp-server-0.2.0-linux-arm64.tar.gz
+            artifacts/tar-archives/ssh-mcp-server-0.2.0-macos-x64.tar.gz
+            artifacts/tar-archives/ssh-mcp-server-0.2.0-macos-arm64.tar.gz
+            artifacts/zip-archives/ssh-mcp-server-0.2.0-linux-x64.zip
+            artifacts/zip-archives/ssh-mcp-server-0.2.0-linux-arm64.zip
+            artifacts/zip-archives/ssh-mcp-server-0.2.0-windows-x64.zip
+            artifacts/zip-archives/ssh-mcp-server-0.2.0-macos-x64.zip
+            artifacts/zip-archives/ssh-mcp-server-0.2.0-macos-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
