@@ -1,0 +1,29 @@
+# SSH MCP Server Dockerfile
+FROM node:20-alpine
+
+# Install OpenSSH client tools
+RUN apk add --no-cache openssh-client openssh-keygen
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy built application
+COPY dist ./dist
+
+# Copy documentation
+COPY docs ./docs
+
+# Create .ssh directory for keys and config
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+
+# Expose MCP server on stdio
+ENV NODE_ENV=production
+
+# Run the MCP server
+CMD ["node", "dist/server.js"]

@@ -1,0 +1,40 @@
+# Netbird MCP Server - Multi-stage build for Linux
+FROM --platform=linux/amd64 golang:1.24-bullseye AS builder
+
+WORKDIR /build
+
+# Copy go module files
+COPY go.mod go.sum ./
+
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Build for Linux from the cmd/mcp-netbird directory (where main package is)
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o mcp-netbird ./cmd/mcp-netbird && chmod +x mcp-netbird
+
+# Runtime stage
+FROM --platform=linux/amd64 debian:bullseye-slim
+
+# Install ca-certificates for HTTPS
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -r -u 1000 -m mcp-netbird
+
+WORKDIR /app
+
+# Copy binary from builder with executable permissions
+COPY --from=builder --chown=1000:1000 --chmod=755 /build/mcp-netbird /app/
+
+# Use non-root user
+USER mcp-netbird
+
+# Set environment variables (will be overridden by Docker MCP config)
+ENV NETBIRD_HOST=""
+ENV NETBIRD_API_TOKEN=""
+
+# Run the MCP server in stdio mode
+ENTRYPOINT ["/app/mcp-netbird"]

@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  mcp-gateway:
+    image: docker/mcp-gateway:latest
+    container_name: mcp-gateway
+    ports:
+      - "8811:8811"
+    command:
+      - --transport=streaming
+      - --servers=ssh-mcp-server,netbird-mcp-server
+      - --port=8811
+      - --static=true
+      - --long-lived=true
+      - --catalog=/config/mcp-catalog-custom.yaml
+      - --verbose
+    depends_on:
+      - mcp-ssh-mcp-server
+      - mcp-netbird-mcp-server
+    volumes:
+      - ./mcp-catalog-custom.yaml:/config/mcp-catalog-custom.yaml:ro
+    networks:
+      - mcp-network
+
+  mcp-ssh-mcp-server:
+    image: mcp/ssh-mcp-server:latest
+    container_name: mcp-ssh-mcp-server
+    entrypoint: ["node", "dist/server.js"]
+    init: true
+    cpus: 1
+    mem_limit: 2g
+    stdin_open: true
+    tty: true
+    security_opt:
+      - no-new-privileges
+    labels:
+      - docker-mcp=true
+      - docker-mcp-tool-type=mcp
+      - docker-mcp-name=ssh-mcp-server
+      - docker-mcp-transport=stdio
+    volumes:
+      # Persistent state storage
+      - ssh-mcp-state:/var/lib/ssh-mcp
+      # Mount SSH keys and config from host
+      - ${HOME}/.ssh:/root/.ssh:ro
+      # Mount known_hosts for host key verification
+      - ${HOME}/.ssh/known_hosts:/root/.ssh/known_hosts:rw
+      # Mount gateway bridge
+      - type: image
+        source: docker/mcp-gateway
+        target: /docker-mcp
+    networks:
+      - mcp-network
+
+  mcp-netbird-mcp-server:
+    image: mcp/netbird-mcp-server:latest
+    container_name: mcp-netbird-mcp-server
+    entrypoint: ["node", "dist/server.js"]
+    init: true
+    cpus: 1
+    mem_limit: 2g
+    stdin_open: true
+    tty: true
+    security_opt:
+      - no-new-privileges
+    environment:
+      - NETBIRD_HOST=${NETBIRD_HOST:-bird.xnet.ngo}
+      - NETBIRD_API_TOKEN=${NETBIRD_API_TOKEN}
+    labels:
+      - docker-mcp=true
+      - docker-mcp-tool-type=mcp
+      - docker-mcp-name=netbird-mcp-server
+      - docker-mcp-transport=stdio
+    volumes:
+      # Mount gateway bridge
+      - type: image
+        source: docker/mcp-gateway
+        target: /docker-mcp
+    networks:
+      - mcp-network
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  ssh-mcp-state:
+    driver: local

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  ssh-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.ssh
+    image: mcp/ssh-mcp-server:latest
+    container_name: ssh-mcp-server
+    stdin_open: true
+    tty: true
+    volumes:
+      # Mount SSH keys and config from host
+      - ${HOME}/.ssh:/root/.ssh:ro
+      # Optional: Mount known_hosts for host key verification
+      - ${HOME}/.ssh/known_hosts:/root/.ssh/known_hosts:rw
+      # Persistent state storage
+      - ssh-mcp-state:/var/lib/ssh-mcp
+    networks:
+      - mcp-network
+    restart: unless-stopped
+
+  netbird-mcp:
+    build:
+      context: .
+      dockerfile: Dockerfile.netbird
+    image: mcp/netbird-mcp-server:latest
+    container_name: netbird-mcp-server
+    stdin_open: true
+    tty: true
+    environment:
+      - NETBIRD_HOST=${NETBIRD_HOST:-bird.xnet.ngo}
+      - NETBIRD_API_TOKEN=${NETBIRD_API_TOKEN}
+    networks:
+      - mcp-network
+    restart: unless-stopped
+
+networks:
+  mcp-network:
+    driver: bridge
+
+volumes:
+  ssh-mcp-state:
+    driver: local

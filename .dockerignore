@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Source files (we only need dist/)
+src/
+tests/
+.kiro/
+
+# Build artifacts
+*.tgz
+coverage/
+
+# Development files
+.git/
+.gitignore
+.prettierrc
+eslint.config.js
+vitest.config.ts
+tsconfig.json
+
+# Documentation (optional - include if needed)
+*.md
+!README.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# OpenSSH source (not needed in container)
+openssh-portable/
