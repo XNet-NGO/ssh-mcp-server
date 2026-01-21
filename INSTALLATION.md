@@ -53,11 +53,64 @@ sudo mv ssh-mcp-server-linux-arm64 /usr/local/bin/ssh-mcp-server
 ssh-mcp-server --version
 ```
 
+### Linux (TAR.GZ Archive)
+
+```bash
+# Download and extract (x64)
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-linux-x64.tar.gz
+tar -xzf ssh-mcp-server-0.2.0-linux-x64.tar.gz
+cd ssh-mcp-server-0.2.0-linux-x64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Or ARM64
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-linux-arm64.tar.gz
+tar -xzf ssh-mcp-server-0.2.0-linux-arm64.tar.gz
+cd ssh-mcp-server-0.2.0-linux-arm64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Verify installation
+ssh-mcp-server --version
+```
+
+### Linux (ZIP Archive)
+
+```bash
+# Download and extract (x64)
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-linux-x64.zip
+unzip ssh-mcp-server-0.2.0-linux-x64.zip
+cd ssh-mcp-server-0.2.0-linux-x64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Or ARM64
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-linux-arm64.zip
+unzip ssh-mcp-server-0.2.0-linux-arm64.zip
+cd ssh-mcp-server-0.2.0-linux-arm64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Verify installation
+ssh-mcp-server --version
+```
+
 ### Windows
 
 ```powershell
 # Download binary
 Invoke-WebRequest -Uri "https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-win-x64.exe" -OutFile "ssh-mcp-server.exe"
+
+# Move to a directory in PATH (optional)
+Move-Item ssh-mcp-server.exe C:\Windows\System32\
+
+# Verify installation
+ssh-mcp-server --version
+```
+
+### Windows (ZIP Archive)
+
+```powershell
+# Download and extract
+Invoke-WebRequest -Uri "https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-windows-x64.zip" -OutFile "ssh-mcp-server.zip"
+Expand-Archive ssh-mcp-server.zip -DestinationPath .
+cd ssh-mcp-server-0.2.0-windows-x64
 
 # Move to a directory in PATH (optional)
 Move-Item ssh-mcp-server.exe C:\Windows\System32\
@@ -77,6 +130,44 @@ sudo mv ssh-mcp-server /usr/local/bin/
 # Or Apple Silicon (M1/M2/M3)
 curl -L https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-macos-arm64 -o ssh-mcp-server
 chmod +x ssh-mcp-server
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Verify installation
+ssh-mcp-server --version
+```
+
+### macOS (TAR.GZ Archive)
+
+```bash
+# Download and extract (Intel)
+curl -L https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-macos-x64.tar.gz -o ssh-mcp-server.tar.gz
+tar -xzf ssh-mcp-server.tar.gz
+cd ssh-mcp-server-0.2.0-macos-x64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Or Apple Silicon (M1/M2/M3)
+curl -L https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-macos-arm64.tar.gz -o ssh-mcp-server.tar.gz
+tar -xzf ssh-mcp-server.tar.gz
+cd ssh-mcp-server-0.2.0-macos-arm64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Verify installation
+ssh-mcp-server --version
+```
+
+### macOS (ZIP Archive)
+
+```bash
+# Download and extract (Intel)
+curl -L https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-macos-x64.zip -o ssh-mcp-server.zip
+unzip ssh-mcp-server.zip
+cd ssh-mcp-server-0.2.0-macos-x64
+sudo mv ssh-mcp-server /usr/local/bin/
+
+# Or Apple Silicon (M1/M2/M3)
+curl -L https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-macos-arm64.zip -o ssh-mcp-server.zip
+unzip ssh-mcp-server.zip
+cd ssh-mcp-server-0.2.0-macos-arm64
 sudo mv ssh-mcp-server /usr/local/bin/
 
 # Verify installation

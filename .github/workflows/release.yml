@@ -149,10 +149,92 @@ jobs:
           name: ssh-mcp-server_0.2.0_arm64.deb
           path: ssh-mcp-server_0.2.0_arm64.deb
 
+  create-archives:
+    name: Create TAR and ZIP archives
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Create archive directories
+        run: |
+          mkdir -p archives/ssh-mcp-server-0.2.0-linux-x64
+          mkdir -p archives/ssh-mcp-server-0.2.0-linux-arm64
+          mkdir -p archives/ssh-mcp-server-0.2.0-windows-x64
+          mkdir -p archives/ssh-mcp-server-0.2.0-macos-x64
+          mkdir -p archives/ssh-mcp-server-0.2.0-macos-arm64
+
+      - name: Prepare Linux x64 archive
+        run: |
+          cp artifacts/ssh-mcp-server-linux-x64/ssh-mcp-server-linux-x64 archives/ssh-mcp-server-0.2.0-linux-x64/ssh-mcp-server
+          chmod +x archives/ssh-mcp-server-0.2.0-linux-x64/ssh-mcp-server
+          cp README.md LICENSE INSTALLATION.md archives/ssh-mcp-server-0.2.0-linux-x64/
+          
+      - name: Prepare Linux ARM64 archive
+        run: |
+          cp artifacts/ssh-mcp-server-linux-arm64/ssh-mcp-server-linux-arm64 archives/ssh-mcp-server-0.2.0-linux-arm64/ssh-mcp-server
+          chmod +x archives/ssh-mcp-server-0.2.0-linux-arm64/ssh-mcp-server
+          cp README.md LICENSE INSTALLATION.md archives/ssh-mcp-server-0.2.0-linux-arm64/
+
+      - name: Prepare Windows x64 archive
+        run: |
+          cp artifacts/ssh-mcp-server-win-x64.exe/ssh-mcp-server-win-x64.exe archives/ssh-mcp-server-0.2.0-windows-x64/ssh-mcp-server.exe
+          cp README.md LICENSE INSTALLATION.md archives/ssh-mcp-server-0.2.0-windows-x64/
+
+      - name: Prepare macOS x64 archive
+        run: |
+          cp artifacts/ssh-mcp-server-macos-x64/ssh-mcp-server-macos-x64 archives/ssh-mcp-server-0.2.0-macos-x64/ssh-mcp-server
+          chmod +x archives/ssh-mcp-server-0.2.0-macos-x64/ssh-mcp-server
+          cp README.md LICENSE INSTALLATION.md archives/ssh-mcp-server-0.2.0-macos-x64/
+
+      - name: Prepare macOS ARM64 archive
+        run: |
+          cp artifacts/ssh-mcp-server-macos-arm64/ssh-mcp-server-macos-arm64 archives/ssh-mcp-server-0.2.0-macos-arm64/ssh-mcp-server
+          chmod +x archives/ssh-mcp-server-0.2.0-macos-arm64/ssh-mcp-server
+          cp README.md LICENSE INSTALLATION.md archives/ssh-mcp-server-0.2.0-macos-arm64/
+
+      - name: Create TAR.GZ archives
+        run: |
+          cd archives
+          tar -czf ssh-mcp-server-0.2.0-linux-x64.tar.gz ssh-mcp-server-0.2.0-linux-x64/
+          tar -czf ssh-mcp-server-0.2.0-linux-arm64.tar.gz ssh-mcp-server-0.2.0-linux-arm64/
+          tar -czf ssh-mcp-server-0.2.0-macos-x64.tar.gz ssh-mcp-server-0.2.0-macos-x64/
+          tar -czf ssh-mcp-server-0.2.0-macos-arm64.tar.gz ssh-mcp-server-0.2.0-macos-arm64/
+
+      - name: Create ZIP archives
+        run: |
+          cd archives
+          zip -r ssh-mcp-server-0.2.0-linux-x64.zip ssh-mcp-server-0.2.0-linux-x64/
+          zip -r ssh-mcp-server-0.2.0-linux-arm64.zip ssh-mcp-server-0.2.0-linux-arm64/
+          zip -r ssh-mcp-server-0.2.0-windows-x64.zip ssh-mcp-server-0.2.0-windows-x64/
+          zip -r ssh-mcp-server-0.2.0-macos-x64.zip ssh-mcp-server-0.2.0-macos-x64/
+          zip -r ssh-mcp-server-0.2.0-macos-arm64.zip ssh-mcp-server-0.2.0-macos-arm64/
+
+      - name: Upload TAR.GZ archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: tar-archives
+          path: |
+            archives/*.tar.gz
+
+      - name: Upload ZIP archives
+        uses: actions/upload-artifact@v4
+        with:
+          name: zip-archives
+          path: |
+            archives/*.zip
+
   release:
     name: Create GitHub Release
     runs-on: ubuntu-latest
-    needs: [build, create-packages]
+    needs: [build, create-packages, create-archives]
     
     steps:
       - name: Checkout code
@@ -178,5 +260,7 @@ jobs:
             artifacts/ssh-mcp-server-macos-arm64/ssh-mcp-server-macos-arm64
             artifacts/ssh-mcp-server_0.2.0_amd64.deb/ssh-mcp-server_0.2.0_amd64.deb
             artifacts/ssh-mcp-server_0.2.0_arm64.deb/ssh-mcp-server_0.2.0_arm64.deb
+            artifacts/tar-archives/*.tar.gz
+            artifacts/zip-archives/*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
