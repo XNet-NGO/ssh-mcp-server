@@ -285,26 +285,3 @@ jobs:
           labels: ${{ steps.meta-ssh.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Extract metadata for Netbird MCP Server
-        id: meta-netbird
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}-netbird
-          tags: |
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Netbird MCP Server image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          file: ./Dockerfile.netbird
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: ${{ steps.meta-netbird.outputs.tags }}
-          labels: ${{ steps.meta-netbird.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
