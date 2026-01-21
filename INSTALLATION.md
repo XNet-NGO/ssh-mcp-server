@@ -22,13 +22,15 @@ ssh-mcp-server --version
 ### Linux (RPM-based: RHEL, CentOS, Fedora, Rocky)
 
 ```bash
-# Download and install (x64)
-wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-1.x86_64.rpm
-sudo rpm -i ssh-mcp-server-0.2.0-1.x86_64.rpm
+# Download standalone binary (x64)
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-linux-x64
+chmod +x ssh-mcp-server-linux-x64
+sudo mv ssh-mcp-server-linux-x64 /usr/local/bin/ssh-mcp-server
 
 # Or ARM64
-wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-0.2.0-1.aarch64.rpm
-sudo rpm -i ssh-mcp-server-0.2.0-1.aarch64.rpm
+wget https://github.com/XNet-NGO/ssh-mcp-server/releases/download/v0.2.0/ssh-mcp-server-linux-arm64
+chmod +x ssh-mcp-server-linux-arm64
+sudo mv ssh-mcp-server-linux-arm64 /usr/local/bin/ssh-mcp-server
 
 # Verify installation
 ssh-mcp-server --version
@@ -186,11 +188,6 @@ ssh-mcp-server --version
 ### DEB Package
 ```bash
 sudo dpkg -r ssh-mcp-server
-```
-
-### RPM Package
-```bash
-sudo rpm -e ssh-mcp-server
 ```
 
 ### Binary

@@ -61,7 +61,7 @@ jobs:
           path: ${{ matrix.output }}
 
   create-packages:
-    name: Create DEB and RPM packages
+    name: Create DEB packages
     runs-on: ubuntu-latest
     needs: build
     
@@ -80,11 +80,6 @@ jobs:
         with:
           name: ssh-mcp-server-linux-arm64
           path: ./binaries
-
-      - name: Install packaging tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rpm
 
       - name: Create DEB package (x64)
         run: |
@@ -142,57 +137,6 @@ jobs:
           dpkg-deb --build ssh-mcp-server-arm64
           mv ssh-mcp-server-arm64.deb ssh-mcp-server_0.2.0_arm64.deb
 
-      - name: Create RPM spec file
-        run: |
-          mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          
-          cat > ~/rpmbuild/SPECS/ssh-mcp-server.spec << 'EOF'
-          Name:           ssh-mcp-server
-          Version:        0.2.0
-          Release:        1%{?dist}
-          Summary:        Model Context Protocol server for SSH operations
-          License:        MIT
-          URL:            https://github.com/XNet-NGO/ssh-mcp-server
-          Source0:        ssh-mcp-server-linux-x64
-          Source1:        ssh-mcp-server-linux-arm64
-
-          %description
-          SSH MCP Server exposes comprehensive SSH functionality to AI assistants
-          through the Model Context Protocol (MCP). Developed by XNet Inc.
-
-          %prep
-
-          %build
-
-          %install
-          mkdir -p %{buildroot}/usr/local/bin
-          %ifarch x86_64
-          install -m 755 %{SOURCE0} %{buildroot}/usr/local/bin/ssh-mcp-server
-          %endif
-          %ifarch aarch64
-          install -m 755 %{SOURCE1} %{buildroot}/usr/local/bin/ssh-mcp-server
-          %endif
-
-          %files
-          /usr/local/bin/ssh-mcp-server
-
-          %changelog
-          * Tue Jan 21 2026 Joshua S. Doucette <joshua@xnet.ngo> - 0.2.0-1
-          - Initial RPM release
-          - Stateless architecture for Docker MCP Gateway
-          EOF
-
-      - name: Build RPM packages
-        run: |
-          cp binaries/ssh-mcp-server-linux-x64 ~/rpmbuild/SOURCES/
-          cp binaries/ssh-mcp-server-linux-arm64 ~/rpmbuild/SOURCES/
-          
-          rpmbuild --target x86_64 -bb ~/rpmbuild/SPECS/ssh-mcp-server.spec
-          rpmbuild --target aarch64 -bb ~/rpmbuild/SPECS/ssh-mcp-server.spec
-          
-          cp ~/rpmbuild/RPMS/x86_64/ssh-mcp-server-0.2.0-1.*.x86_64.rpm ./ssh-mcp-server-0.2.0-1.x86_64.rpm
-          cp ~/rpmbuild/RPMS/aarch64/ssh-mcp-server-0.2.0-1.*.aarch64.rpm ./ssh-mcp-server-0.2.0-1.aarch64.rpm
-
       - name: Upload DEB x64
         uses: actions/upload-artifact@v4
         with:
@@ -204,18 +148,6 @@ jobs:
         with:
           name: ssh-mcp-server_0.2.0_arm64.deb
           path: ssh-mcp-server_0.2.0_arm64.deb
-
-      - name: Upload RPM x64
-        uses: actions/upload-artifact@v4
-        with:
-          name: ssh-mcp-server-0.2.0-1.x86_64.rpm
-          path: ssh-mcp-server-0.2.0-1.x86_64.rpm
-
-      - name: Upload RPM ARM64
-        uses: actions/upload-artifact@v4
-        with:
-          name: ssh-mcp-server-0.2.0-1.aarch64.rpm
-          path: ssh-mcp-server-0.2.0-1.aarch64.rpm
 
   release:
     name: Create GitHub Release
@@ -246,7 +178,5 @@ jobs:
             artifacts/ssh-mcp-server-macos-arm64/ssh-mcp-server-macos-arm64
             artifacts/ssh-mcp-server_0.2.0_amd64.deb/ssh-mcp-server_0.2.0_amd64.deb
             artifacts/ssh-mcp-server_0.2.0_arm64.deb/ssh-mcp-server_0.2.0_arm64.deb
-            artifacts/ssh-mcp-server-0.2.0-1.x86_64.rpm/ssh-mcp-server-0.2.0-1.x86_64.rpm
-            artifacts/ssh-mcp-server-0.2.0-1.aarch64.rpm/ssh-mcp-server-0.2.0-1.aarch64.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
