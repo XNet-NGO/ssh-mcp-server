@@ -237,6 +237,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write  # Required for attestations
+      attestations: write  # Required for attestations
     
     steps:
       - name: Checkout code
@@ -263,11 +265,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: xnetadmin
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Extract metadata for SSH MCP Server
         id: meta-ssh
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: |
+            ghcr.io/${{ github.repository }}
+            xnetadmin/openssh-mcp
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
@@ -275,6 +285,7 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Build and push SSH MCP Server image
+        id: build-push
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -285,3 +296,21 @@ jobs:
           labels: ${{ steps.meta-ssh.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: true  # Enable provenance attestation
+          sbom: true  # Enable SBOM attestation
+
+      - name: Generate artifact attestation for GHCR
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.build-push.outputs.digest }}
+          push-to-registry: true
+
+      - name: Update Docker Hub repository description
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: xnetadmin
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xnetadmin/openssh-mcp
+          short-description: ${{ github.event.repository.description }}
+          readme-filepath: ./README.md
